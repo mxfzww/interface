@@ -47,9 +47,20 @@ class ApiController extends Controller {
      * 网盘公共接口
      */
     final public function actionSkydriveinterface() {
+        $data = $this->parmAssignment();
+        print_r($data);
+        //foreach()
+        //return Yii::$app->curl->setGetParams()->get($parm["swooleclient"]['host']);
+    }
+    
+    /**
+     * 赋值
+     */
+    public function parmAssignment(){
         $parm = include $this->pathParm;
-        print_r(Yii::$app->curl->setGetParams($this->methodParm)->get($parm["swooleclient"]['host']));
-
+        $parm = $this->methodParm;
+        $parm['like'] = sprintf($this->methodParm['like'], Yii::$app->request->get('name'));
+        return $parm;
     }
 
     /**
