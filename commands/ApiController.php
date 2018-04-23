@@ -27,10 +27,11 @@ class ApiController extends Controller {
     protected $classData;
     //接口配置文件信息
     protected $methodParm;
+    //swoole 配置信息
+    protected $methodClass;
 
-    //
     public function __construct($id, $module, $config = array()) {
-        
+
         parent::__construct($id, $module, $config);
 
         $this->getClass(); //获取当前操作
@@ -56,9 +57,11 @@ class ApiController extends Controller {
      */
     final public function actionSkydriveinterface() {
         $data = $this->parmAssignment();
-        print_r($data);
-        //foreach()
-        //return Yii::$app->curl->setGetParams()->get($parm["swooleclient"]['host']);
+        $zzdata = Yii::$app->curl->setGetParams($data)->get($this->methodClass["swooleclient"]['host']);
+        $spiderData = json_decode($zzdata);
+       //$spiderData);
+        $spiderFilterData  = $this->_filterData($spiderData);
+        return $this->asJson($spiderFilterData);
     }
 
     /**
@@ -77,6 +80,7 @@ class ApiController extends Controller {
         $filepath = $this->interfaceSettiongFile();
         if (file_exists($filepath)) {
             $methodClass = include $filepath;
+            $this->methodClass = $methodClass;
             if (in_array($this->classData, explode(",", $methodClass['interface']))) {
                 return $methodClass;
             }
