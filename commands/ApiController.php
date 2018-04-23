@@ -27,15 +27,22 @@ class ApiController extends Controller {
     protected $classData;
     //接口配置文件信息
     protected $methodParm;
-    //接口权限信息
-    protected $pathParm;
-    
+
+    //
     public function __construct($id, $module, $config = array()) {
+        
         parent::__construct($id, $module, $config);
-        $this->getClass();
-        //判读接口是否开通
-        if (!empty($this->getRole())) {
-            if (empty($this->getSettionInformation())) {
+
+        $this->getClass(); //获取当前操作
+
+        $role = $this->getRole(); //判读接口是否开通
+
+        if (!empty($role)) {
+
+            $getSettionInformation = $this->getSettionInformation(); //获取接口信息
+
+            if (empty($getSettionInformation)) {
+
                 exit("没有该接口信息");
             }
         } else {
@@ -45,6 +52,7 @@ class ApiController extends Controller {
 
     /**
      * 网盘公共接口
+     * TODO::约定前端 查询字段必须为 name 
      */
     final public function actionSkydriveinterface() {
         $data = $this->parmAssignment();
@@ -52,19 +60,18 @@ class ApiController extends Controller {
         //foreach()
         //return Yii::$app->curl->setGetParams()->get($parm["swooleclient"]['host']);
     }
-    
+
     /**
      * 赋值
      */
-    public function parmAssignment(){
-        $parm = include $this->pathParm;
+    public function parmAssignment() {
         $parm = $this->methodParm;
         $parm['like'] = sprintf($this->methodParm['like'], Yii::$app->request->get('name'));
         return $parm;
     }
 
     /**
-     * 获取接口权限
+     * 获取接口权限信息
      */
     public function getRole() {
         $filepath = $this->interfaceSettiongFile();
@@ -91,21 +98,10 @@ class ApiController extends Controller {
     }
 
     /**
-     * 获取配置名
-     * @return type
-     */
-    public function getClass() {
-        $classString = get_class($this);
-        $this->classData = strtolower(str_replace("Controller", "", array_pop(explode("\\", $classString))));
-    }
-
-    /**
      * 获取接口权限文件路径
      */
     public function interfaceSettiongFile() {
-        $filename = Yii::$app->basePath . "/api/config/config.php";
-        $this->pathParm =  $filename;
-        return $filename;
+        return Yii::$app->basePath . "/api/config/config.php";
     }
 
     /**
@@ -113,6 +109,15 @@ class ApiController extends Controller {
      */
     public function interfaceInformationPath() {
         return sprintf(Yii::$app->basePath . "/api/config/sassPan/%s.php", $this->classData);
+    }
+
+    /**
+     * 获取配置名
+     * @return type
+     */
+    public function getClass() {
+        $classString = get_class($this);
+        $this->classData = strtolower(str_replace("Controller", "", array_pop(explode("\\", $classString))));
     }
 
 }
