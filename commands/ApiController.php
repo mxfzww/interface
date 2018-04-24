@@ -59,7 +59,6 @@ class ApiController extends Controller {
         $data = $this->parmAssignment();
         $zzdata = Yii::$app->curl->setGetParams($data)->get($this->methodClass["swooleclient"]['host']);
         $spiderData = json_decode($zzdata);
-       //$spiderData);
         $spiderFilterData  = $this->_filterData($spiderData);
         return $this->asJson($spiderFilterData);
     }
