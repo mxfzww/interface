@@ -24,10 +24,13 @@ class BaiduController extends ApiController {
             $arr[$i]['url'] = $hrefarray[1][0];
             $reg3 = "/>(.*)<\/a>/";
             preg_match_all($reg3, $aarray[0][$i], $acontent);
-
-            $arr[$i]['name'] = $acontent[1][0];
+            //$str=htmlspecialchars($str);
+            $arr[$i]['name'] = strip_tags($acontent[1][0]);
         }
-        return $arr;
+        $resData['List'] = $arr;
+        $resData['total'] = count($arr);
+
+        return $resData;
     }
 
 }
