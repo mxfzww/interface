@@ -1,7 +1,6 @@
 <?php
 return array(
     "interface"=>"baidu",
-    //swoole服务器信息123
     "swoole"=>array(
         "host"=>"0.0.0.0",
         "port"=>9051,
